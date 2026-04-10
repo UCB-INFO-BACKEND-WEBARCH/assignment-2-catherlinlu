@@ -160,7 +160,7 @@ Creates a new task with validation.
 
 **Validation Rules:**
 - `title`: Required, 1-100 characters
-- `description`: Optional, max 500 characters
+- `description`:# Optional, max 500 characters
 - `due_date`: Optional, must be valid ISO 8601 format
 - `category_id`: Optional, must reference an existing category
 
