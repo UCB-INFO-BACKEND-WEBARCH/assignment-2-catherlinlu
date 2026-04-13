@@ -1,0 +1,35 @@
+version: '3.8'
+#describe services & build 
+
+services:
+  app:
+    build: . 
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app
+      - SQLALCHEMY_DATABASE_URI=postgresql://postgres:password@db:5432/tasks
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tasks
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+  worker:
+    build: .
+      command: python worker.py
+      environment:
+        - SQLALCHEMY_DATABASE_URI=postgresql://postgres:password@db:5432/tasks
+        - REDIS_URL=redis://redis:6379
+      depends_on:
+        - db
+        - redis
+volumes:
+  postgres_data:

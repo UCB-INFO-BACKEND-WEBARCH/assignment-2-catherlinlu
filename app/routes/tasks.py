@@ -63,7 +63,7 @@ def create_task():
     data = request.get_json()
     errors = task_schema.validate(data)
     if errors:
-        return jsonify({"errors": errors}), 400
+        return jsonify({"errors": errors}), 400 #marshmallow generates messages based on requirements
     #category must reference existing 
     if data.get('category_id'): 
         if not Category.query.get(data['category_id']):
@@ -84,7 +84,7 @@ def create_task():
     #notifications
     notification_queued = False
     if task.due_date:  #check if due date exists
-        now = datetime.now(timezone.utc)
+        now = datetime.utcnow()
         time_until_due = task.due_date - now
         
         #only queue if due in the future AND in less than 24 hrs
