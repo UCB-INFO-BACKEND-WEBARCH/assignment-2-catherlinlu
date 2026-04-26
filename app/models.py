@@ -6,7 +6,7 @@ class Category (db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique = True)
     color = db.Column(db.String(7), nullable=True)
-    tasks = db.relationship('Tasks', backref='Category', lazy=True)
+    tasks = db.relationship('Tasks', backref='category', lazy=True)
 
 class Tasks (db.Model):
      __tablename__ = "Tasks"

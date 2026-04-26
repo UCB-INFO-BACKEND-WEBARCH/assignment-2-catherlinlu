@@ -20,9 +20,9 @@ def get_all_categories():
             "task_count": len(c.tasks)})
     return jsonify({"categories": all}), 200
 
-@categories.route('/categories/:id', methods=['GET'])
+@categories.route('/categories/<int:id>', methods=['GET'])
 def get_category(id): 
-    category = Category.get_or_404(id)
+    category = Category.query.get(id)
     if not category: 
         return jsonify({"error": "404 Not Found"}), 404
     #tasks is just a pointer/related in categories, need to display what we want 
@@ -54,20 +54,20 @@ def create_category():
         return jsonify({"errors":{"name":["Category with this name already exists."]}}), 400
     category = Category(
         name = data['name'],
-        color = data['color']
+        color = data.get('color')
     )
     db.session.add(category)
     db.session.commit()
-    return jsonify({ "name": category.name, "color": category.name})
+    return jsonify({ "name": category.name, "color": category.color})
 
-@categories.route('/categories/:id', methods=['DELETE'])
+@categories.route('/categories/<int:id>', methods=['DELETE'])
 def delete_category(id):
-    category = Category.get_or_404(id)
+    category = Category.query.get(id)
     if not category: 
         return jsonify({"error": "Category not found"}), 404
     if len(category.tasks) > 0:
         return jsonify({"error": "Cannot delete category with existing tasks. Move or delete tasks first."}), 400
     db.session.delete(category)
-    db.session.commit
+    db.session.commit()
     return jsonify({"message": "Category deleted"}), 200
 

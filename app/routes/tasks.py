@@ -15,7 +15,7 @@ def get_all_tasks():
     completed_filter = request.args.get('completed')
     if completed_filter is not None: 
         complete = completed_filter.lower() == 'true'
-        all_tasks = Tasks.query.filter(completed = complete).all()
+        all_tasks = Tasks.query.filter(Tasks.completed == complete).all()
     else: 
         all_tasks = Tasks.query.all()
     result = []
@@ -37,9 +37,9 @@ def get_all_tasks():
             })
     return jsonify ({"tasks": result}), 200
 
-@tasks_bp.route('/tasks/:id', methods=['GET'])
+@tasks_bp.route('/tasks/<int:id>', methods=['GET'])
 def get_task(id):
-    task = Tasks.get_or_404(id)
+    task = Tasks.query.get(id)
     if not task: 
         return jsonify({"error": "Task not found"}), 404
     return jsonify({
@@ -105,9 +105,9 @@ def create_task():
         "notification_queued": notification_queued  #placeholder
         }), 201
 
-@tasks_bp.route('/tasks/:id', methods=['PUT'])
+@tasks_bp.route('/tasks/<int:id>', methods=['PUT'])
 def update_task(id):
-    task = Tasks.get_or_404(id)
+    task = Tasks.query.get(id)
     if not task: 
         return jsonify({"error":"Task Not Found"}), 404
     data = request.get_json()
@@ -144,9 +144,9 @@ def update_task(id):
         "updated_at": task.updated_at.isoformat()
     }), 200
 
-@tasks_bp.route('/tasks/:id', methods=['DELETE'])
+@tasks_bp.route('/tasks/<int:id>', methods=['DELETE'])
 def delete_task(id):
-    task = Tasks.query.get_or_404(id)
+    task = Tasks.query.get(id)
     if not task:
         return jsonify({"error": "Task not found"}), 404    
     db.session.delete(task)
